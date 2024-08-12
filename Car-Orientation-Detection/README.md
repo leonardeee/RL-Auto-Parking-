@@ -1,26 +1,25 @@
-# Car Orientation Detection
+# 小车识别及方向检测
 
-[English](https://github.com/Fan-Treasure/Auto-Parking/blob/main/Car-Orientation-Detection/README.md) | [简体中文](https://github.com/Fan-Treasure/Auto-Parking/blob/main/Car-Orientation-Detection/README_cn.md)
 
-## Introduction
+## 简介
 
-Shandong University (Weihai) 2020 Data Science and Artificial Intelligence Experimental Class Computer Vision (1) Project Part I: Car Recognition and Orientation Detection.
+山东大学 2020级数据科学与人工智能班计算机视觉项目第一部分：小车识别与方向检测
 
-We use PP-YOLOv2 for car recognition and orientation detection, and our own network for orientation detection, both of which are trained in Baidu AI Studio and deployed locally.
+单目摄像头实现小车识别和方向检测，小车识别部分使用PP-YOLOv2，朝向检测使用我们自己搭建的网络，均在百度飞桨AI Studio完成模型训练，并进行本地化部署。
 
-## Reproduction
+## 复现
 
-### Car Detection
+### 小车识别
 
-We trained the car recognition model based on PP-YOLOv2 in Baidu AI Studio, as detailed in [Car Detection Model Training  based on PP-YOLOv2 in Baidu AI Studio](https://aistudio.baidu.com/aistudio/projectdetail/4918206).
+我们在百度AI Studio基于PP-YOLOv2训练了小车识别模型，详见[[百度AI Studio]基于PP-YOLOv2的小车识别](https://aistudio.baidu.com/projectdetail/8234915)
 
-### Orientation Detection
+### 方向检测
 
-We trained the orientation detection model in Baidu AI Studio based on the network we built, as detailed in [Orientation Detection Model Training in Baidu AI Studio](https://aistudio.baidu.com/aistudio/projectdetail/4885428).
+我们在百度AI Studio基于自己搭建的网络训练了朝向检测模型，详见[[百度AI Studio]小车方向检测](https://aistudio.baidu.com/projectdetail/8234948)
 
-## Local Deployment
+## 本地部署
 
-### Environments
+### 环境
 
 - Python＞=3.7
 - paddlepaddle-gpu==2.3.2
@@ -29,39 +28,39 @@ We trained the orientation detection model in Baidu AI Studio based on the netwo
 - cuDNN >= 7.6
 - opencv-python==3.4
 
-For general information about how to install PaddleDetection, please see [PaddleDetection Installation](https://github.com/PaddlePaddle/PaddleDetection/blob/release/2.5/docs/tutorials/INSTALL.md).
+关于如何安装PaddleDetection，请参考[PaddleDetection Installation](https://github.com/PaddlePaddle/PaddleDetection/blob/release/2.5/docs/tutorials/INSTALL.md).
 
-### Install Dependencies
+### 安装依赖
 
-- Clone this project
-
-```
-https://github.com/Fan-Treasure/Auto-Parking.git
-```
-
-- Go to the project directory
+- 克隆本项目
 
 ```
-cd Car-Orientation-Detection
+git clone https://github.com/leonardeee/RL-Auto-Parking-.git
 ```
 
-- Install environments
+- 进入项目目录
+
+```
+cd Car-Direction-Detection
+```
+
+- 安装环境
 
 ```
 pip install -r requirements.txt
 ```
 
-### Download Models
+### 下载模型
 
-You can download the models provided in AI Studio projects, or you can fork the project in AI Studio and train your own models.
+可以下载AI Studio项目中提供的模型，也可以在AI Studio中fork项目并训练你自己的模型
 
-### Run Models
+### 运行模型
 
 ```
 python Car_Orientation_Dtection.py
 ```
 
-## Results
+## 结果
 
 <center>
  <img src=".\images\Orientation Detection.png">
@@ -72,12 +71,3 @@ python Car_Orientation_Dtection.py
 </center>
 
 
-## Other Links
-
-[[Baidu AI Studio]Car Detection Model Training  based on PP-YOLOv2](https://aistudio.baidu.com/aistudio/projectdetail/4918206) 
-
-[[Baidu AI Studio]Orientation Detection Model Training](https://aistudio.baidu.com/aistudio/projectdetail/4885428) 
-
-[[Github]Road Segmentation and Autonomous Driving](https://github.com/xujialuu/self-driving-car)
-
-[[Bilibili]Explanation Video of Car Orientation Detection](https://www.bilibili.com/video/BV1YM41167Dy) 

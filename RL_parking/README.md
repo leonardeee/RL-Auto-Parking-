@@ -1,153 +1,155 @@
-# RL parking
+# 强化学习自动泊车
 
-[English](https://github.com/Fan-Treasure/Auto-Parking/blob/main/RL_parking/README.md) | [简体中文](https://github.com/Fan-Treasure/Auto-Parking/blob/main/RL_parking/README_cn.md)
 
-## Introduction
 
-Shandong University, Weihai Class of 2020 Data Science and Artificial Intelligence Experimental Class Computer Vision Project Part II: Reinforcement Learning Simulated Parking and Real Parking
+## 简介
 
-This project is divided into two parts:
+山东大学2020级数据科学与人工智能实验班计算机视觉项目第二部分：强化学习模拟泊车+实际泊车
 
-1. Implement a simulated Ackermann structured car reversing into the parking lot based on the DQN algorithm, the reinforcement learning algorithm is implemented using stable-baselines3, the car and reversing environment is implemented based on pybullet, gym and Solidworks.
-2. Deploying the model on a real Ackermann structured car and using Arduino to control the car to reverse into garage.
+本项目分为两部分
 
-## Part 1  Reinforcement learning simulated parking
+1. 基于DQN算法实现模拟阿克曼结构小车倒车入库，强化学习算法使用stable-baselines3实现，小车和倒车环境基于pybullet、gym、Solidworks实现。
 
-### Simulating environments
+2. 在真实阿克曼结构小车上部署模型，使用Arduino控制小车倒车入库。
 
-We used Solidworks to design the Ackermann structural four-wheeled car and a map containing two vertical garages, two sloping garages, one side garage and one irregular garage. Then we exported the urdf file and built the environment via pybullet and gym.
+## Part 1  强化学习模拟泊车
 
-#### Ackermann structured car
+### 模拟环境
+
+我们使用Solidworks设计了阿克曼结构四轮小车以及包含2个竖直车库、2个斜车库、1个侧方车库、1个不规则车库的地图，导出urdf文件并通过pybullet与gym搭建环境。
+
+#### 阿克曼小车
 
 <img src="./images/car_model.png" alt="car"  width = "500"/>
 
-#### Map
+#### 地图
 
 <img src="./images/map.png" alt="map" width = "500"/>
 
-### Tasks
 
-#### 1. Vertical reversing into a vertical garage
 
-- Target: The car departs from the front of the parking space, the direction of the front of the car is aligned with the direction of the parking space, the reversing process cannot collide with the wall to achieve vertical reversing into the parking space.
-- result: 
+### 任务
+
+#### 1. 垂直倒车进入竖直库
+
+- 目标：小车从车位前出发，车头方向与车位方向对齐，倒车过程中不能碰撞墙壁，实现垂直倒车入库。
+- 效果：
 
 <img src="./images/mode_1.gif" alt="Mode_1"  />
 
 
 
-#### 2. Sideways vertical reversing into a vertical garage
+#### 2. 侧方位-垂直倒车进入竖直库
 
-- Target: The car starts from a diagonal above the parking space, the direction of the front of the car is perpendicular to the parking space, and the reversing process cannot collide with the wall to achieve reversing into the parking space.
-- result: 
+- 目标：小车从车位斜上方出发，车头方向与车位垂直，倒车过程中不能碰撞墙壁，实现倒车入库。
+- 效果：
 
 <img src="./images/mode_2.gif" alt="Mode_2"  />
 
 
 
-#### 3. Diagonal reversing into a diagonal garage
+#### 3. 斜方位-倒车进入斜库
 
-- Target: The car starts from the front of the parking space, the direction of the front of the car is at a certain angle to the parking space, the reversing process can not collide with the wall and the car next to the parking space, to achieve reversing into the parking space.
-- result: 
+- 目标：小车从车位前出发，车头方向与车位成一定夹角，倒车过程中不能碰撞墙壁和车位旁的小车，实现倒车入库。
+- 效果：
 
 <img src="./images/mode_3.gif" alt="Mode_3"  />
 
 
 
-#### 4. Sideways vertical reversing into a vertical garage placed at an angle
+#### 4. 侧方位-垂直倒车进入倾斜放置的竖直库
 
-- Target: The vertical garage is placed at an angle, with the car starting from the top right of the garage, the direction of the front of the car is perpendicular to the parking space, and the reversing process cannot collide with the wall to achieve reversing into the garage.
-- result: 
+- 目标：竖直库倾斜放置，小车从车库右上方出发，车头方向与车位垂直，倒车过程中不能碰撞墙壁，实现倒车入库。
+- 效果：
 
 <img src="./images/mode_4.gif" alt="Mode_4"  />
 
 
 
-#### 5. Sideways parallel reversing into a side garage
+#### 5. 侧方位-平行倒车进入侧方库
 
-- Target: The car reverses into the garage from in front of the parking space with the front direction parallel to the parking space and without colliding with the wall during the reversing process.
-- result: 
+- 目标：小车从车位前，车头方向与车位平行，倒车过程中不能碰撞墙壁，实现倒车入库。
+- 效果：
 
 <img src="./images/mode_5.gif" alt="Mode_5"  />
 
 
 
-#### 6. Reversing into the sloping garage from any position
+#### 6. 任意位置出发倒车进入斜库
 
-- Target: The car starts from any point, the direction of the front end is random, and the reversing process cannot collide with the wall or the car next to the parking space to achieve reversing into the parking space.
-- result: 
+- 目标：小车从任意点出发，车头方向随机，倒车过程中不能碰撞墙壁和车位旁的小车，实现倒车入库。
+- 效果：
 
 <img src="./images/mode_6.gif" alt="Mode_6"  />
 
 
 
-#### 7. Sideways reversing into an irregular garage
+#### 7. 侧方位-倒车进入不规则车库
 
-- Target: The shape and position of the garage is irregular, the car starts from the bottom left of the garage, the direction of the car's head makes a certain angle with the parking space, and the reversing process cannot collide with the wall to achieve reversing into the garage.
-- result: 
+- 目标：车库形状与位置不规则，小车从车库左下方出发，车头方向与车位成一定夹角，倒车过程中不能碰撞墙壁，实现倒车入库。
+- 效果：
 
 <img src="./images/mode_7.gif" alt="Mode_7"  />
 
 
 
-#### 8. Reversing sideways into a sloping garage
+#### 8. 侧方位-倒车进入斜库
 
-- Target: The car goes from the bottom right of the parking space, the direction of the front of the car is perpendicular to the parking space, the reversing process can not collide with the wall and the car next to the parking space, to achieve reversing into the parking space.
-- result: 
+- 目标：小车从车位右下方，车头方向与车位垂直，倒车过程中不能碰撞墙壁和车位旁的小车，实现倒车入库。
+- 效果：
 
 <img src="./images/mode_8.gif" alt="Mode_8"  />
 
 
+### 强化学习
 
-### RL Definition
+#### 1. 状态
 
-#### 1. Observation
+我们定义环境中心点为 [0, 0]，使用pybullet实时获取小车的坐标、速度和方向等信息，作为小车当前的状态。
 
-We define the centre point of the environment as [0, 0] and use the pybullet to get the coordinates, speed and direction of the  in real time as the current state of the car.
-
-The state is a 6-dimensional vector of the x-coordinate, y-coordinate, x-directional linear velocity, y-directional linear velocity, cosine of the angle with the x-direction, and cosine of the angle with the y-direction of the car.
+状态是一个6维向量，分别为小车的x坐标、y坐标、x方向线速度、y方向线速度、与x方向夹角余弦值、与y方向夹角余弦值。
 
 <img src="./images/obs.png" alt="obs"  />
 
 
 
-#### 2. Action
+#### 2. 动作
 
-The car can perform 4 movements: forward, backward, left turn and right turn, using pybullet to simulate the movement of the car in the environment.
+小车可以执行4种动作：前进、后退、左转、右转，使用pybullet在环境中模拟小车的运动。
 
 
 
-#### 3. Reward
+#### 3. 奖励
 
-For most state-action pairs, we define reward as follows.
+对于大部分状态-动作对，我们定义如下 reward：
 
 <img src="./images/reward.png" alt="reward"  />
 
-Define $reward = -500$ when a car collides with a wall or another car.
+当小车碰撞到墙壁、其他小车，或者运动到地图之外时，定义 reward = -1000。
 
 
 
-#### 4. Episode
+#### 4. 回合
 
-We set the episode length to 500, but terminate the episode when the car collides with a wall or another car.
+我们设定回合长度为2000，但当小车碰撞到墙壁或其他小车时，终止回合。
 
 
 
-### Install
+### 本地部署
 
-- Clone this project
+- 克隆本项目
 
 ```shell
-git clone https://github.com/Fan-Treasure/Auto-Parking.git
+git clone https://github.com/leonardeee/RL-Auto-Parking-.git
 ```
 
-- Go to the project directory
+- 进入项目目录
 
 ```shell
 cd RL_parking/RL_parking-main
 ```
 
-- Install environments
+- 安装停车环境（会同时安装gym、pybullet、stable-baselines3、torch、moviepy等第三方库）
 
 ```shell
 pip install -e parking_env
@@ -155,61 +157,61 @@ pip install -e parking_env
 
 
 
-### Train
+### 训练
 
-#### 1. Training with the DQN algorithm
+#### 1. 使用 DQN 算法训练
 
-In terms of algorithms, we have chosen the classical algorithm for discrete action spaces, Deep Q Network (DQN), an off-policy reinforcement learning algorithm based on Q-learning, which uses a replay buffer to store the experience gained by an intelligence exploring the environment.
+在算法方面，我们选择了适用于离散动作空间的经典算法——DQN (Deep Q Network)。DQN是一种基于Q-learning的off-policy强化学习算法，使用replay buffer存放智能体在环境中探索得到的经验。
 
-We use the best open source library in the field of reinforcement learning, stable-baselines3, to train reinforcement learning intelligences in 10 lines of code. At the same time, stable-baselines3 supports a vectorised environment, which makes training fast. Tasks 1-5 were trained with 2 million steps and task 6 with 5 million steps.
+我们使用强化学习领域目前最为优秀的开源库stable-baselines3进行训练，10行代码即可训练强化学习智能体。同时，stable-baselines3支持向量化环境，训练速度较快。其中，任务1-5和7-8训练了2百万步，任务6训练了5百万步。
 
-The training process reveals that the car has a high probability of exploration in the early stage, and it keeps trying to learn based on the trial and error experience in the environment. Later on, the car's exploration rate decreases and it is able to complete the parking process with a high success rate. Task 2 After 1.5 million steps, the car basically achieves the effect that it can park in the target parking space from any point.
+通过训练过程可以发现，前期小车有较高的探索概率，在环境中不断试错，根据试错经验进行学习，后期小车探索率降低，能够以较高的成功率完成停车过程。任务2在150万步后，小车基本上达到了从任意点出发都可以停到目标车位的效果。
 
-##### Training commands for each task
+##### 各任务训练命令
 
-- Task 1: Vertical reversing into a vertical garage
+- 任务1：垂直倒车进入竖直库
 
 ```shell
 python train.py --mode=1
 ```
 
-- Task 2: Sideways vertical reversing into a vertical garage
+- 任务2：侧方位-垂直倒车进入竖直库
 
 ```shell
 python train.py --mode=2
 ```
 
-- Task 3: Reversing diagonally into a diagonal garage
+- 任务3：斜方位-倒车进入斜库
 
 ```shell
 python train.py --mode=3
 ```
 
-- Task 4: Vertical reversing into an inclined placed vertical garage
+- 任务4：垂直倒车进入倾斜放置的竖直库
 
 ```shell
 python train.py --mode=4
 ```
 
-- Task 5: Sideways parallel reversing into a side garage
+- 任务5：侧方位-平行倒车进入侧方库
 
 ```shell
 python train.py --mode=5
 ```
 
-- Task 6: Reversing into the sloping garage from any position
+- 任务6：任意位置出发倒车进入斜库
 
 ```shell
 python dgn_agent.py --mode=6
 ```
 
-- Task 7: Reversing sideways into an irregular garage
+- 任务7：侧方位-倒车进入不规则车库
 
 ```shell
 python train.py --mode=5
 ```
 
-- Task 8: Reversing sideways into a diagonal garage
+- 任务8：侧方位-倒车进入斜库
 
 ```shell
 python dgn_agent.py --mode=6
@@ -217,7 +219,7 @@ python dgn_agent.py --mode=6
 
 
 
-#### 2. Training with SAC and HER algorithms (using the highway-env environment)
+#### 2. 使用 SAC 和 HER 算法训练（使用 highway-env 环境）
 
 ```shell
 python sac_her_agent.py
@@ -225,30 +227,30 @@ python sac_her_agent.py
 
 
 
-#### 3. Visualization Curves using Tensorboard
+#### 3. Tensorboard 可视化曲线
 
-##### Take Task 2 as an example
+##### 以任务2为例
 
-- mean episode reward
+- 回合平均奖励
 
 <img src="./images/mean_episode_reward.png" alt="mean_episode_reward"  />
 
-- success rate
+- 成功率
 
 <img src="./images/success_rate.jpg" alt="success_rate"  />
 
 
 
-### Evaluate
+### 测试
 
 ```shell
-# Specify mode and ckpt_path
+# 需指定 mode 和 ckpt_path
 python evaluate.py --mode=mode --ckpt_path=ckpt_path
 ```
 
 
 
-### Play in the environment
+### 渲染模拟环境
 
 ```shell
 python play.py
@@ -256,108 +258,92 @@ python play.py
 
 
 
-### Render videos
+### 渲染视频
 
-#### 1. Car testing videos
+#### 1. 小车测试视频
 
 ```shell
-# Specify mode and ckpt_path
+# 需指定 mode 和 ckpt_path
 python render_video.py --mode=mode --ckpt_path=ckpt_path
 ```
 
 
 
-#### 2. Car training videos
+#### 2. 小车训练视频
 
 ```shell
-# Specify mode and ckpt_path
+# 需指定 mode 和 ckpt_path
 python render_training_video.py --mode=mode --ckpt_path=ckpt_path
 ```
 
 
 
-#### 3. Environment videos
+#### 3. 环境视频
 
 ```shell
-# Specify mode
+# 需指定 mode
 python render_env_video.py --mode=mode
 ```
 
 
 
-## Part 2  Real car auto-parking
+## Part 2  真实小车自动泊车
 
-### Map
+### 地图
 
-We first designed a map of the actual parking based on the simulated environment, with the same number, type and location of garages as in the simulated environment.
+我们首先基于模拟环境设计了实际泊车的地图，车库数量、类型、位置均与模拟环境中相同。
 
-<img src=".\images\real_map.png" alt="real_map"  width = "500"/>
-
-
-
-### Methods
-
-1.  Fix the camera to the camera mount to capture the entire map and the car. The car is identified by taking a live picture of the camera, adding an anchor frame to the identified car using the car recognition model trained in the previous phase and obtaining the coordinates of the apex of the anchor frame to localise the car. The anchor frame is then placed into the car orientation detection model trained in the previous stage to predict the orientation of the car.
-
-<img src=".\images\toward.png" alt="toward"  width = "500"/>
+<img src="./images/real_map.png" alt="real_map"  width = "500"/>
 
 
 
+### 原理
 
-2. Once the car's position information has been obtained, the environment information, model path and reversing mode of the map are specified and the model file for the corresponding mode can be invoked to plan the trajectory for the automatic parking. A total of eight reversing modes are trained for use in the training process. After the call, the car's next target orientation and speed information is obtained and transmitted back to the car using communication. The car's servo and motor are controlled according to the change in target angle and speed, and the relevant functions are called and the parameters specified to control the car's movement.
+1.  将摄像头固定在摄像头支架上拍摄整个地图以及小车，通过对摄像头实时拍摄得到的照片进行识别，使用前一阶段训练好的小车识别模型为识别出的小车添加锚框并得到锚框的顶点坐标来实现对小车的定位，然后再将添加锚框后的图片放入前一阶段训练好的汽车朝向检测模型进行预测以得到小车的朝向。
 
-   <img src=".\images\arduino.png" alt="arduino"  width = "600"/>
+<img src="./images/toward.png" alt="toward"  width = "500"/>
+
+
+
+
+2. 获得了小车的位姿信息后，指定地图的环境信息、模型路径以及倒车模式，即可调用相应模式的模型文件为小车自动泊车进行轨迹规划。在训练过程中一共训练了8种倒车模式以供使用。调用后会得到小车接下来的目标朝向信息和速度信息，利用通信传回小车内部，根据目标角度的变化以及速度的变化来控制小车的舵机以及电机，调用相关函数并指定其中的参数来实现对小车运动的控制。
+
+   <img src="./images/arduino.png" alt="arduino"  width = "600"/>
+   
+   
+   
+3. 在小车的运动过程中，摄像头会不断拍摄图片并不断调用模型识别，持续为小车传回运动指令即可实现小车自动泊车过程的控制。
+
+<img src="./images/sloping.gif" alt="sloping"/>
+
+
+
+### 步骤
+
+1. 打印地图，平铺在地面上，将摄像头连接电脑并利用手机支架安装摄像头，使摄像头能清晰地拍到整个地图画面。
+
+3. 为小车主板烧录`Real_parking\server_without_html\server_without_html.ino`，**注意根据程序中的串口号连接硬件，否则小车无法正常行驶。**
+
+4. 在本地运行`Real_parking\real_parking.py`
+
+5. 将小车放置地图主路上，打开电池开关即可进行自动泊车。
 
    
 
-3. During the movement of the car, the camera takes pictures and continuously calls up the model recognition, which continuously sends back motion commands to the car to control the automatic parking process.
-
-<img src=".\images\sloping.gif" alt="sloping"/>
+### 效果展示
 
 
+#### 1.斜库倒车
 
-### Steps
-
-1. Print the map and lay it flat on the ground. Connect the camera to the computer and mount the camera using the phone mount so that the camera can capture the entire map image clearly.
-
-3. Program `Real_parking\server_without_html\server_without_html.ino` for the car's main board, **Note that the hardware is connected according to the serial port number in the program, otherwise the car will not run properly. **
-
-4. Run `Real_parking\real_parking.py` locally
-
-5. Place the car on the main map road and switch on the battery for automatic parking.
-
-   
-
-### Results
-
-<img src=".\images\sloping.gif" alt="sloping"/>
+<img src="./images/sloping.gif" alt="sloping"/>
 
 
 
 
-#### 1. Inclined garage reversing
+#### 2.侧方入库
 
-<img src=".\images\sloping.gif" alt="sloping"/>
-
-
-
-
-#### 2. Sideways garage reversing
-
-<img src=".\images\sideways.gif" alt="sideways">
+<img src="./images/sideways.gif" alt="sideways">
 
 
 
-## Links
 
-[[Baidu AI Studio]Car Detection Model Training  based on PP-YOLOv2](https://aistudio.baidu.com/aistudio/projectdetail/4918206) 
-
-[[Baidu AI Studio]Orientation Detection Model Training](https://aistudio.baidu.com/aistudio/projectdetail/4885428) 
-
-[[Github]Road Segmentation and Autonomous Driving](https://github.com/xujialuu/self-driving-car)
-
-[[Github]Car Orientation Detection](https://github.com/Fan-Treasure/Auto-Parking/tree/main/Car-Orientation-Detection)
-
-[[Bilibili]Explanation Video of Car Orientation Detection](https://www.bilibili.com/video/BV1YM41167Dy) 
-
-[[Bilibili]Explanation Video of RL parking](https://www.bilibili.com/video/BV1fD4y1j7KM/) 
